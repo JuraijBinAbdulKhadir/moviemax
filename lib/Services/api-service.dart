@@ -1,77 +1,78 @@
-
-
 import 'dart:convert';
-
-import 'package:moviemax/Services/constants.dart';
-import 'package:moviemax/Services/movie-model.dart';
 import 'package:http/http.dart' as http;
+import 'package:moviemax/Services/movie-model.dart';
 
-class ApiService{
-  final String moviesUrl='https://api.themoviedb.org/3/discover/movie?api_key=$apiKey';
-  final String popularUrl='https://api.themoviedb.org/3/movie/popular?api_key=$apiKey';
-  final String topRatedUrl='https://api.themoviedb.org/3/movie/top_rated?api_key=$apiKey';
-  final String tvUrl='https://api.themoviedb.org/3/discover/tv?api_key=$apiKey';
+import 'constants.dart';
 
-  Future<List<Movie>> getMovies()async{
-    final response= await http.get(Uri.parse(moviesUrl));
-    try{
-      if(response.statusCode==200){
-        List<dynamic> data= json.decode(response.body)['results'];
+class ApiService {
+  final String baseUrl = 'https://api.themoviedb.org/3';
 
-        List<Movie> movies= data.map((movie)=>Movie.fromJson(movie)).toList();
+
+  Future<List<Movie>> getMovies() async {
+    try {
+      final response = await http.get(Uri.parse('$baseUrl/discover/movie?api_key=$apiKey'));
+
+      if (response.statusCode == 200) {
+        List<dynamic> data = jsonDecode(response.body)['results'];
+        List<Movie>movies=data.map((movie) => Movie.fromJson(movie)).toList();
+        print(movies);
         return movies;
+      } else {
+        throw Exception('Failed to load movies');
       }
-    }catch(e){
-      throw Exception('Error:-------------->$e');
-
+    } catch (e) {
+      throw Exception('Error: $e');
     }
-    return [];
-
   }
 
-  Future<List<Movie>> getPopular()async{
-    final response=await http.get(Uri.parse(popularUrl));
-    try{
-       if(response.statusCode==200){
-         List<dynamic> data=json.decode(response.body)['results'];
+  Future<List<Movie>> getPopular() async {
+    try {
+      final response = await http.get(Uri.parse('$baseUrl/movie/popular?api_key=$apiKey'));
 
-         List<Movie> movies=data.map((movie)=>Movie.fromJson(movie)).toList();
-         return movies;
-       }
-
-    }catch(e){
-      throw Exception('Error-------------->$e');
-    }
-    return [];
-  }
-
-  Future<List<Movie>> getTopRated()async{
-    final response =await http.get(Uri.parse(topRatedUrl));
-    try{
-       if(response.statusCode==200){
-         List<dynamic> data = json.decode(response.body)['results'];
-         List<Movie> movies = data.map((movie)=>Movie.fromJson(movie)).toList();
-         return movies;
-       }
-    }catch(e){
-      throw Exception('Error-------------------->$e');
-    }
-    return [];
-  }
-
-  Future<List<Movie>> getTv()async{
-    final response = await http.get(Uri.parse(tvUrl));
-
-    try{
-      if(response.statusCode==200){
-        List<dynamic> data=json.decode(response.body)['results'];
-
-        List<Movie> movies = data.map((movie)=>Movie.fromJson(movie)).toList();
+      if (response.statusCode == 200) {
+        List<dynamic> data = jsonDecode(response.body)['results'];
+        List<Movie>movies=data.map((movie) => Movie.fromJson(movie)).toList();
+        print(movies);
         return movies;
+      } else {
+        throw Exception('Failed to load popular movies');
       }
-    }catch(e){
-      throw Exception('Error-------------------->$e');
+    } catch (e) {
+      throw Exception('Error: $e');
     }
-    return [];
+  }
+
+  Future<List<Movie>> getTopRated() async {
+    try {
+      final response = await http.get(Uri.parse('$baseUrl/movie/top_rated?api_key=$apiKey'));
+
+      if (response.statusCode == 200) {
+        List<dynamic> data = jsonDecode(response.body)['results'];
+        List<Movie>movies=data.map((movie) => Movie.fromJson(movie)).toList();
+        print(movies);
+        return movies;
+      } else {
+        throw Exception('Failed to load top-rated movies');
+      }
+    } catch (e) {
+      throw Exception('Error: $e');
+    }
+  }
+
+  Future<List<Movie>> getTv() async {
+    try {
+      final response = await http.get(Uri.parse('$baseUrl/discover/tv?api_key=$apiKey'));
+
+      if (response.statusCode == 200) {
+        List<dynamic> data = jsonDecode(response.body)['results'];
+        List<Movie>movies=data.map((movie) => Movie.fromJson(movie)).toList();
+        print(movies);
+        return movies;
+      } else {
+        throw Exception('Failed to load TV series');
+      }
+    } catch (e) {
+      throw Exception('Error: $e');
+    }
   }
 }
